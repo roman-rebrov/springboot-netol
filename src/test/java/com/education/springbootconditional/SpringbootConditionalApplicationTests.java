@@ -1,5 +1,6 @@
 package com.education.springbootconditional;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,18 +27,24 @@ class SpringbootConditionalApplicationTests {
     @Test
     void contextLoads() {
 
+        final Integer devappPort = myFirstApp.getMappedPort(8080);
+        final Integer prodappPost = mySecondApp.getMappedPort(8081);
+
         ResponseEntity<String> forFrstEntity = template.getForEntity(
-                "http://localhost:" + myFirstApp.getMappedPort(8080) + "/profile",
+                "http://localhost:" + devappPort + "/profile",
                 String.class
         );
 
         ResponseEntity<String> forSecEntity = template.getForEntity(
-                "http://localhost:" + mySecondApp.getMappedPort(8081) + "/profile",
+                "http://localhost:" + prodappPost + "/profile",
                 String.class
         );
 
         System.out.println("devapp == " + forFrstEntity.getBody());
         System.out.println("prodapp == " + forSecEntity.getBody());
+
+        Assertions.assertEquals("Current profile is dev", forFrstEntity.getBody());
+        Assertions.assertEquals("Current profile is production", forSecEntity.getBody());
     }
 
 }
