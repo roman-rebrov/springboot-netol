@@ -25,25 +25,35 @@ class SpringbootConditionalApplicationTests {
             .withExposedPorts(8081);
 
     @Test
-    void contextLoads() {
+    void devappDockerTest(){
 
         final Integer devappPort = myFirstApp.getMappedPort(8080);
-        final Integer prodappPost = mySecondApp.getMappedPort(8081);
 
         ResponseEntity<String> forFrstEntity = template.getForEntity(
                 "http://localhost:" + devappPort + "/profile",
                 String.class
         );
 
+        System.out.println("devapp == " + forFrstEntity.getBody());
+
+        Assertions.assertEquals("Current profile is dev", forFrstEntity.getBody());
+
+    }
+
+    @Test
+    void prodappDockerTest() {
+
+        final Integer prodappPost = mySecondApp.getMappedPort(8081);
+
+
+
         ResponseEntity<String> forSecEntity = template.getForEntity(
                 "http://localhost:" + prodappPost + "/profile",
                 String.class
         );
 
-        System.out.println("devapp == " + forFrstEntity.getBody());
         System.out.println("prodapp == " + forSecEntity.getBody());
 
-        Assertions.assertEquals("Current profile is dev", forFrstEntity.getBody());
         Assertions.assertEquals("Current profile is production", forSecEntity.getBody());
     }
 
